@@ -85,14 +85,14 @@ with tf.device(device):
 #Defining the number of training steps
 hooks=[tf.train.StopAtStepHook(last_step=100000)]
 
-with tf.train.MonitoredTrainingSession(master=target,
-    is_chief=(FLAGS.task_index == 0),
-    checkpoint_dir=FLAGS.logs_dir,
-    hooks = hooks) as sess:
+# with tf.train.MonitoredTrainingSession(master=target,
+#     is_chief=(FLAGS.task_index == 0),
+#     checkpoint_dir=FLAGS.logs_dir,
+#     hooks = hooks) as sess:
 
-    while not sess.should_stop():
-            # execute training step here (read data, feed_dict, session)
-            # TODO define training ops
-            data_batch = ...
-            feed_dict = {...}
-            loss, _ = sess.run(...)
+#     while not sess.should_stop():
+#             # execute training step here (read data, feed_dict, session)
+#             # TODO define training ops
+#             data_batch = ...
+#             feed_dict = {...}
+#             loss, _ = sess.run(...)
