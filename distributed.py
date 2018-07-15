@@ -58,8 +58,29 @@ def device_and_target():
 
 # Defining graph
 with tf.device(device):
+    # Creates a graph.
+    a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
+    b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
+    c = tf.matmul(a, b)
+
+    # Creates a session with allow_soft_placement and log_device_placement set to True.
+    config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
+    config.gpu_options.per_process_gpu_memory_fraction = 0.5 # maximun alloc gpu50% of MEM
+    config.gpu_options.allow_growth = True #allocate dynamically
+    sess = tf.Session(config = config)
+
+    # Runs the op.
+    #print(sess.run(c))
+
+    # Runs the op.
+    options = tf.RunOptions(output_partition_graphs=True)
+    metadata = tf.RunMetadata()
+    c_val = sess.run(c, options=options, run_metadata=metadata)
+
+    print(metadata.partition_graphs) 
+    print(c_val)
         #TODO define your graph here
-        ...
+        
 
 #Defining the number of training steps
 hooks=[tf.train.StopAtStepHook(last_step=100000)]
