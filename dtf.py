@@ -9,24 +9,27 @@
 # with tf.Session() as sess:
 #     result = sess.run(mean, feed_dict={x: np.random.random(100)})
 #     print(result)
-
 import tensorflow as tf
 
+tf.app.flags.DEFINE_string('job_name', '', 'One of local worker')
+tf.app.flags.DEFINE_string('local', '', """Comma-separated list of hostname:port for the """)
 
-cluster = tf.train.ClusterSpec({"local": ["localhost:2222", "localhost:2223"]})
+tf.app.flags.DEFINE_integer('task_id', 0, 'Task ID of local/replica running the training')
+tf.app.flags.DEFINE_integer('constant_id', 0, 'the constant we want to run')
 
-x = tf.constant(2)
+FLAGS = tf.app.flags.FLAGS
 
+local_host = FLAGS.local.split(',')
 
-with tf.device("/job:local/task:1"):
-    y2 = x - 66
+cluster = tf.train.ClusterSpec({"local": local_host})
+server = tf.train.Server(cluster, job_name=FLAGS.job_name, task_index=FLAGS.task_id)
 
-with tf.device("/job:local/task:0"):
-    y1 = x + 300
-    y = y1 + y2
-
-
-with tf.Session("grpc://localhost:2222") as sess:
-    result = sess.run(y)
-    print(result)
-    
+with tf.Session(server.target) as sess:
+    if(FLAGS.constant_id == 0):
+        with tf.device('/job:local/task:'+str(FLAGS.task_id)):
+            const1 = tf.constant("Hello I am the first constant")
+            print sess.run(const1)
+    if (FLAGS.constant_id == 1):
+        with tf.device('/job:local/task:'+str(FLAGS.task_id)):
+            const2 = tf.constant("Hello I am the second constant")
+            print sess.run(const2)
