@@ -1,14 +1,3 @@
-# import numpy as np
-# import tensorflow as tf
-
-# x = tf.placeholder(tf.float32, 100)
-
-# mean = tf.reduce_mean(x)
-
-
-# with tf.Session() as sess:
-#     result = sess.run(mean, feed_dict={x: np.random.random(100)})
-#     print(result)
 import tensorflow as tf
 
 tf.app.flags.DEFINE_string('job_name', '', 'One of local worker')
@@ -22,7 +11,9 @@ FLAGS = tf.app.flags.FLAGS
 local_host = FLAGS.local.split(',')
 
 cluster = tf.train.ClusterSpec({"local": local_host})
-server = tf.train.Server(cluster, job_name=FLAGS.job_name, task_index=FLAGS.task_id)
+server = tf.train.Server(cluster,job_name=FLAGS.job_name, task_index=FLAGS.task_id, protocol='grpc+gdr') # default protocol is 'grpc'
+
+# server = tf.train.Server(cluster, job_name=FLAGS.job_name, task_index=FLAGS.task_id)
 
 with tf.Session(server.target) as sess:
     if(FLAGS.constant_id == 0):
