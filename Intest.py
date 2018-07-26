@@ -314,7 +314,7 @@ LOG_DIR = "/tmp/log+"
 
 
 with tf.device('/device:GPU:1'):
-    num_steps = 20000
+    num_steps = 10000
 
     start_time = time.time()
     config=tf.ConfigProto(log_device_placement=True)
@@ -379,8 +379,8 @@ with tf.device('/device:GPU:1'):
 
                 print ("test accuracy: "+str(accuracy(test_lb,result)))
 
-                save_path = saver.save(sess,file_path)
-                print("Model saved.")
+                # save_path = saver.save(sess,file_path)
+                # print("Model saved.")
     print("total times --- %s seconds ---" % (time.time() - start_time2))
 
     sess.close()
