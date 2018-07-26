@@ -320,7 +320,7 @@ elif FLAGS.job_name == "worker":
     #start_time = time.time()
     config=tf.ConfigProto(log_device_placement=True)
     #maximun alloc gpu 10% of MEM
-    config.gpu_options.per_process_gpu_memory_fraction = 0.1
+    config.gpu_options.per_process_gpu_memory_fraction = 0.9
     config.gpu_options.allow_growth = True #allocate dynamically
 
     # gpu_options = tf.GPUOptions(allow_growth=True)
