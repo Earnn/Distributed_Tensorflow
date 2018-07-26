@@ -7,9 +7,10 @@ from tensorflow.examples.tutorials.mnist import input_data
 line = "======================================================================"
 
 
-parameter_servers = ["localhost:2222"]
-workers = ["localhost:2223","localhost:2224"]
+parameter_servers = ["192.168.148.12:2222"]
+workers = ["192.168.148.12:2223","192.168.148.12:2224","192.168.148.12:2225"]
 cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker":workers})
+# cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker":workers})
 tf.app.flags.DEFINE_string("job_name", "", "'ps' / 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
 FLAGS = tf.app.flags.FLAGS
@@ -17,6 +18,7 @@ server = tf.train.Server(cluster,job_name=FLAGS.job_name,task_index=FLAGS.task_i
 
 
 start_time = time.time()
+start_time2 = time.time()
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 print("--- read_data: %s seconds ---" % (time.time() - start_time))
 print(line)
@@ -379,6 +381,8 @@ with tf.device('/device:GPU:1'):
 
                 save_path = saver.save(sess,file_path)
                 print("Model saved.")
+    print("total times --- %s seconds ---" % (time.time() - start_time2))
+
     sess.close()
 
 
