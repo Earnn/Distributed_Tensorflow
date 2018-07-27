@@ -314,81 +314,81 @@ elif FLAGS.job_name == "worker":
         PRINT_EVERY = 100 
 
         LOG_DIR = "/tmp/log"
-        # with tf.device('/device:GPU:1'):
-        num_steps = 20000
+        with tf.device('/device:GPU:1'):
+            num_steps = 20000
 
-        #start_time = time.time()
-        # config=tf.ConfigProto(log_device_placement=True)
-        # #maximun alloc gpu 10% of MEM
-        # config.gpu_options.per_process_gpu_memory_fraction = 0.5
-        # config.gpu_options.allow_growth = True #allocate dynamically
+            #start_time = time.time()
+            # config=tf.ConfigProto(log_device_placement=True)
+            # #maximun alloc gpu 10% of MEM
+            # config.gpu_options.per_process_gpu_memory_fraction = 0.5
+            # config.gpu_options.allow_growth = True #allocate dynamically
 
-        # # gpu_options = tf.GPUOptions(allow_growth=True)
-        # # sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
-        # sess = tf.Session(config = config)
+            # # gpu_options = tf.GPUOptions(allow_growth=True)
+            # # sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
+            # sess = tf.Session(config = config)
 
 
 
-        with tf.Session(graph=graph) as sess:
+            with tf.Session(graph=graph) as sess:
 
-                #initialize variables
-                sess.run(init)
-                print("Model initialized.")
+                    #initialize variables
+                    sess.run(init)
+                    print("Model initialized.")
 
-                #use the previous model or don't and initialize variables
-                # if use_previous:
-                #     saver.restore(sess,file_path)
-                #     print("Model restored.")
+                    #use the previous model or don't and initialize variables
+                    # if use_previous:
+                    #     saver.restore(sess,file_path)
+                    #     print("Model restored.")
 
-                #training
-                #start_time = time.time()
-                for s in range(num_steps):
+                    #training
                     #start_time = time.time()
+                    for s in range(num_steps):
+                        #start_time = time.time()
 
-                    offset = (s*batch_size) % (len(trainX)-batch_size)
-                    batch_x,batch_y = trainX[offset:(offset+batch_size),:],train_lb[offset:(offset+batch_size),:]
-                    feed_dict={X : batch_x, y_ : batch_y}
+                        offset = (s*batch_size) % (len(trainX)-batch_size)
+                        batch_x,batch_y = trainX[offset:(offset+batch_size),:],train_lb[offset:(offset+batch_size),:]
+                        feed_dict={X : batch_x, y_ : batch_y}
 
-                    _,loss_value = sess.run([opt,loss],feed_dict=feed_dict)
+                        _,loss_value = sess.run([opt,loss],feed_dict=feed_dict)
 
-                    print("step",s)
-                    print("--- %s seconds ---" % (time.time() - start_time))
-                    print(line)
-
-
-                    if s%100 == 0:
-                        feed_dict = {tf_valX : valX}
-                        preds=sess.run(predictions_val,feed_dict=feed_dict)
-
-                        print ("step: "+str(s))
-                        print ("validation accuracy: "+str(accuracy(val_lb,preds)))
-                        print (" ")
+                        print("step",s)
                         print("--- %s seconds ---" % (time.time() - start_time))
                         print(line)
 
-                    #get test accuracy and save model
-                    if s == (num_steps-1):
-                        #create an array to store the outputs for the test
-                        result = np.array([]).reshape(0,10)
 
-                        #use the batches class
-                        batch_testX=test_batchs(testX)
+                        if s%100 == 0:
+                            feed_dict = {tf_valX : valX}
+                            preds=sess.run(predictions_val,feed_dict=feed_dict)
 
-                        start_time = time.time()
-                        for i in range(len(testX)/test_batch_size):
-                            feed_dict = {tf_testX : batch_testX.nextBatch(test_batch_size)}
-                            preds=sess.run(predictions_test, feed_dict=feed_dict)
-                            result=np.concatenate((result,preds),axis=0)
-                        print("--- loop_time %s seconds ---" % (time.time() - start_time))
+                            print ("step: "+str(s))
+                            print ("validation accuracy: "+str(accuracy(val_lb,preds)))
+                            print (" ")
+                            print("--- %s seconds ---" % (time.time() - start_time))
+                            print(line)
+
+                        #get test accuracy and save model
+                        if s == (num_steps-1):
+                            #create an array to store the outputs for the test
+                            result = np.array([]).reshape(0,10)
+
+                            #use the batches class
+                            batch_testX=test_batchs(testX)
+
+                            start_time = time.time()
+                            for i in range(len(testX)/test_batch_size):
+                                feed_dict = {tf_testX : batch_testX.nextBatch(test_batch_size)}
+                                preds=sess.run(predictions_test, feed_dict=feed_dict)
+                                result=np.concatenate((result,preds),axis=0)
+                            print("--- loop_time %s seconds ---" % (time.time() - start_time))
 
 
-                        print ("test accuracy: "+str(accuracy(test_lb,result)))
+                            print ("test accuracy: "+str(accuracy(test_lb,result)))
 
-                        # save_path = saver.save(sess,file_path)
-        
-                         # print("Model saved.")
-        print("--- total_time %s second ---"% (time.time() - start_time2))
-        sess.close()       
+                            # save_path = saver.save(sess,file_path)
+            
+                             # print("Model saved.")
+            print("--- total_time %s second ---"% (time.time() - start_time2))
+            sess.close()       
 
         
 
