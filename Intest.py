@@ -321,7 +321,7 @@ elif FLAGS.job_name == "worker":
         step = 0
         acc_stability_count = 0
 
-        start_time = time.time()
+        
         config=tf.ConfigProto(log_device_placement=True)
         #maximun alloc gpu 10% of MEM
         config.gpu_options.per_process_gpu_memory_fraction = 0.5
@@ -330,7 +330,7 @@ elif FLAGS.job_name == "worker":
         # gpu_options = tf.GPUOptions(allow_growth=True)
         # sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
         sess = tf.Session(config = config)
-
+        total_time = time.time()
 
 
         with tf.Session(graph=graph) as sess:
