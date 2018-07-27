@@ -317,8 +317,9 @@ elif FLAGS.job_name == "worker":
         # with tf.device('/device:GPU:1'):
         num_steps = 10000
         convergence_time = 0
-        accuracy = 0
+        val_accuracy = 0
         step = 0
+        acc_stability_count = 0
 
         start_time = time.time()
         config=tf.ConfigProto(log_device_placement=True)
@@ -370,10 +371,15 @@ elif FLAGS.job_name == "worker":
                         print(line)
 
                         temp_acc = int(accuracy(val_lb,preds))
-                        if accuracy != temp_acc:
-                            convergence_time = time.time() - start_time
-                            step = s
-                        
+                        if val_accuracy != temp_acc :
+                            if acc_stability_count < 10:
+                                val_accuracy = temp_acc
+                                convergence_time = time.time() - total_time
+                                step = s
+                                acc_stability_count = 0
+                        else:
+                            acc_stability_count +=1
+
 
 
                     #get test accuracy and save model
