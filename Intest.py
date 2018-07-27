@@ -8,7 +8,7 @@ line = "======================================================================"
 
 
 parameter_servers = ["192.168.148.12:2222"]
-workers = ["192.168.148.12:2223","192.168.148.12:2224"]
+workers = ["192.168.148.12:2223","192.168.148.12:2224","192.168.148.12:2225"]
 cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker":workers})
 tf.app.flags.DEFINE_string("job_name", "", "'ps' / 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
@@ -318,14 +318,14 @@ elif FLAGS.job_name == "worker":
     num_steps = 20000
 
     #start_time = time.time()
-    config=tf.ConfigProto(log_device_placement=True)
-    #maximun alloc gpu 10% of MEM
-    config.gpu_options.per_process_gpu_memory_fraction = 0.5
-    config.gpu_options.allow_growth = True #allocate dynamically
+    # config=tf.ConfigProto(log_device_placement=True)
+    # #maximun alloc gpu 10% of MEM
+    # config.gpu_options.per_process_gpu_memory_fraction = 0.5
+    # config.gpu_options.allow_growth = True #allocate dynamically
 
-    # gpu_options = tf.GPUOptions(allow_growth=True)
-    # sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
-    sess = tf.Session(config = config)
+    # # gpu_options = tf.GPUOptions(allow_growth=True)
+    # # sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
+    # sess = tf.Session(config = config)
 
 
 
