@@ -315,7 +315,10 @@ elif FLAGS.job_name == "worker":
 
         LOG_DIR = "/tmp/log"
         # with tf.device('/device:GPU:1'):
-        num_steps = 20000
+        num_steps = 10000
+        convergence_time = 0
+        accuracy = 0
+        step = 0
 
         start_time = time.time()
         config=tf.ConfigProto(log_device_placement=True)
@@ -351,9 +354,9 @@ elif FLAGS.job_name == "worker":
 
                     _,loss_value = sess.run([opt,loss],feed_dict=feed_dict)
 
-                    print("step",s)
-                    print("--- %s seconds ---" % (time.time() - start_time))
-                    print(line)
+                    # print("step",s)
+                    # print("--- %s seconds ---" % (time.time() - start_time))
+                    # print(line)
 
 
                     if s%100 == 0:
@@ -365,6 +368,13 @@ elif FLAGS.job_name == "worker":
                         print (" ")
                         print("--- %s seconds ---" % (time.time() - start_time))
                         print(line)
+
+                        temp_acc = int(accuracy(val_lb,preds))
+                        if accuracy != temp_acc:
+                            convergence_time = time.time() - start_time
+                            step = s
+                        
+
 
                     #get test accuracy and save model
                     if s == (num_steps-1):
@@ -386,7 +396,10 @@ elif FLAGS.job_name == "worker":
 
                         # save_path = saver.save(sess,file_path)
         
-                         # print("Model saved.")
+                        # print("Model saved.")
+
+        print("Convergence time: ",convergence_time)
+        print("Step: ",step)
         print("--- total_time %s second ---"% (time.time() - start_time2))
         sess.close()       
 
