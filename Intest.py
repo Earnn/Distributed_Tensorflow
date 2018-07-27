@@ -8,7 +8,7 @@ line = "======================================================================"
 
 
 parameter_servers = ["192.168.148.12:2222"]
-workers = ["192.168.148.12:2223","192.168.148.12:2224","192.168.148.12:2225"]
+workers = ["192.168.148.12:2223","192.168.148.12:2224"]
 cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker":workers})
 tf.app.flags.DEFINE_string("job_name", "", "'ps' / 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
