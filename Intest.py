@@ -339,7 +339,7 @@ elif FLAGS.job_name == "worker":
                                 global_step=global_step,
                                 init_op=init_op)
     with sv.managed_session(server.target) as sess:
-        while not sv.should_stop() and step_inloop <= TRAINING_STEPS:
+        while not sv.should_stop() and s <= TRAINING_STEPS:
     # hooks=[tf.train.StopAtStepHook(last_step=100000)]
 
     # with tf.train.MonitoredTrainingSession(master=server.target,
@@ -371,63 +371,62 @@ elif FLAGS.job_name == "worker":
 
             #training
             #start_time = time.time()
-            for s in range(num_steps):
-                #start_time = time.time()
+            # for s in range(num_steps):
 
-                offset = (s*batch_size) % (len(trainX)-batch_size)
-                batch_x,batch_y = trainX[offset:(offset+batch_size),:],train_lb[offset:(offset+batch_size),:]
-                feed_dict={X : batch_x, y_ : batch_y}
+            offset = (s*batch_size) % (len(trainX)-batch_size)
+            batch_x,batch_y = trainX[offset:(offset+batch_size),:],train_lb[offset:(offset+batch_size),:]
+            feed_dict={X : batch_x, y_ : batch_y}
 
-                _,loss_value = sess.run([opt,accuracy,global_step],feed_dict=feed_dict)
+            _,loss_value = sess.run([opt,accuracy,global_step],feed_dict=feed_dict)
 
-                # print("step",s)
-                # print("--- %s seconds ---" % (time.time() - start_time))
-                # print(line)
-
-
-                if s%100 == 0:
-                    feed_dict = {tf_valX : valX}
-                    preds=sess.run(predictions_val,feed_dict=feed_dict)
-
-                    print ("step: "+str(s))
-                    print ("validation accuracy: "+str(accuracy(val_lb,preds)))
-                    print (" ")
-                    print("--- %s seconds ---" % (time.time() - start_time))
-                    print(line)
-
-                    temp_acc = int(accuracy(val_lb,preds))
-                    if val_accuracy != temp_acc :
-                        if acc_stability_count < 10:
-                            val_accuracy = temp_acc
-                            convergence_time = time.time() - total_time
-                            step = s
-                            acc_stability_count = 0
-                    else:
-                        acc_stability_count +=1
+            # print("step",s)
+            # print("--- %s seconds ---" % (time.time() - start_time))
+            # print(line)
 
 
+            if s%100 == 0:
+                feed_dict = {tf_valX : valX}
+                preds=sess.run(predictions_val,feed_dict=feed_dict)
 
-                #get test accuracy and save model
-                if s == (num_steps-1):
-                    #create an array to store the outputs for the test
-                    result = np.array([]).reshape(0,10)
+                print ("step: "+str(s))
+                print ("validation accuracy: "+str(accuracy(val_lb,preds)))
+                print (" ")
+                print("--- %s seconds ---" % (time.time() - start_time))
+                print(line)
 
-                    #use the batches class
-                    batch_testX=test_batchs(testX)
+                temp_acc = int(accuracy(val_lb,preds))
+                if val_accuracy != temp_acc :
+                    if acc_stability_count < 10:
+                        val_accuracy = temp_acc
+                        convergence_time = time.time() - total_time
+                        step = step_inloop
+                        acc_stability_count = 0
+                else:
+                    acc_stability_count +=1
 
-                    start_time = time.time()
-                    for i in range(len(testX)/test_batch_size):
-                        feed_dict = {tf_testX : batch_testX.nextBatch(test_batch_size)}
-                        preds=sess.run(predictions_test, feed_dict=feed_dict)
-                        result=np.concatenate((result,preds),axis=0)
-                    print("--- loop_time %s seconds ---" % (time.time() - start_time))
 
 
-                    print ("test accuracy: "+str(accuracy(test_lb,result)))
+            #get test accuracy and save model
+            if s == (num_steps-1):
+                #create an array to store the outputs for the test
+                result = np.array([]).reshape(0,10)
 
-                    # save_path = saver.save(sess,file_path)
-    
-                    # print("Model saved.")
+                #use the batches class
+                batch_testX=test_batchs(testX)
+
+                start_time = time.time()
+                for i in range(len(testX)/test_batch_size):
+                    feed_dict = {tf_testX : batch_testX.nextBatch(test_batch_size)}
+                    preds=sess.run(predictions_test, feed_dict=feed_dict)
+                    result=np.concatenate((result,preds),axis=0)
+                print("--- loop_time %s seconds ---" % (time.time() - start_time))
+
+
+                print ("test accuracy: "+str(accuracy(test_lb,result)))
+
+                # save_path = saver.save(sess,file_path)
+
+                # print("Model saved.")
 
     print("Convergence time: ",convergence_time)
     print("Step: ",step)
