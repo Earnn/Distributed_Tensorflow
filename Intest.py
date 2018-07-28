@@ -299,6 +299,10 @@ elif FLAGS.job_name == "worker":
         loss = tf.reduce_mean(
             tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
         opt = tf.train.AdamOptimizer(1e-4).minimize(loss,global_step=global_step)
+        correct_prediction = tf.equal(tf.argmax(model(X), 1), tf.argmax(y_, 1)) 
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+
 
         predictions_val = tf.nn.softmax(model(tf_valX,train=False))
         predictions_test = tf.nn.softmax(model(tf_testX,train=False))
@@ -373,7 +377,7 @@ elif FLAGS.job_name == "worker":
                     batch_x,batch_y = trainX[offset:(offset+batch_size),:],train_lb[offset:(offset+batch_size),:]
                     feed_dict={X : batch_x, y_ : batch_y}
 
-                    _,loss_value = sess.run([opt,loss],feed_dict=feed_dict)
+                    _,loss_value = sess.run([opt,accuracy,global_step],feed_dict=feed_dict)
 
                     # print("step",s)
                     # print("--- %s seconds ---" % (time.time() - start_time))
