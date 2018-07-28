@@ -23,7 +23,7 @@ def net(x):
 	net = slim.layers.max_pool2d(net, [2, 2], scope='pool2')
 	net = slim.layers.flatten(net, scope='flatten')
 	net = slim.layers.fully_connected(net, 500, scope='fully_connected')
-	net = slim.layers.fully_connected(net, 10, activation_fn=None,=scope='pred')
+	net = slim.layers.fully_connected(net, 10, activation_fn=None,scope='pred')
 	return net
 if FLAGS.job_name == "ps":
 	server.join() 
