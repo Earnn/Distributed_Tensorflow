@@ -41,7 +41,7 @@ FLAGS = tf.app.flags.FLAGS
 
  
 
-server = tf.train.Server(cluster,job_name=FLAGS.job_name,=task_index=FLAGS.task_index) 
+server = tf.train.Server(cluster,job_name=FLAGS.job_name,task_index=FLAGS.task_index) 
 
  
 
