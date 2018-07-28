@@ -295,18 +295,18 @@ elif FLAGS.job_name == "worker":
             # cross_entropy = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(y, y_))
             # train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy, global_step=global_step)
             
-            loss = tf.reduce_mean(
-                tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
-            opt = tf.train.AdamOptimizer(1e-4).minimize(loss,global_step=global_step)
+        loss = tf.reduce_mean(
+            tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
+        opt = tf.train.AdamOptimizer(1e-4).minimize(loss,global_step=global_step)
 
-            predictions_val = tf.nn.softmax(model(tf_valX,train=False))
-            predictions_test = tf.nn.softmax(model(tf_testX,train=False))
+        predictions_val = tf.nn.softmax(model(tf_valX,train=False))
+        predictions_test = tf.nn.softmax(model(tf_testX,train=False))
 
-            #initialize variable
-            init = tf.initialize_all_variables()
-            init_op = tf.global_variables_initializer()
-            #use to save variables so we can pick up later
-            saver = tf.train.Saver()
+        #initialize variable
+        init = tf.initialize_all_variables()
+        init_op = tf.global_variables_initializer()
+        #use to save variables so we can pick up later
+        saver = tf.train.Saver()
 
 
     #set use_previous=1 to use file_path model
