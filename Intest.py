@@ -74,10 +74,10 @@ def accuracy(target,predictions):
 
 
 
-batch_size = 48
+batch_size = 50
 map1 = 32
 map2 = 64
-num_fc1 = 700 #1028
+num_fc1 = 1028 #1028
 num_fc2 = 10
 reduce1x1 = 16
 dropout=0.5
