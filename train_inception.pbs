@@ -1,3 +1,10 @@
+#!/bin/sh
+#PBS -l select=2:ncpus=40:ngpus=8
+#PBS -l walltime=04:10:00
+#PBS -q fj6
+#PBS -P 21170158 
+#PBS -N ML 
+#PBS -j oe
 cd "$PBS_O_WORKDIR" || exit $?
 
 export SINGULARITYENV_LD_LIBRARY_PATH=/home/projects/21170158/mpi/openmpi-1.10.7-cuda9-gnu4/lib:$SINGULARITYENV_LD_LIBRARY_PATH
