@@ -15,30 +15,31 @@ tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
 FLAGS = tf.app.flags.FLAGS
 server = tf.train.Server(cluster,job_name=FLAGS.job_name,task_index=FLAGS.task_index, protocol='grpc+verbs')
 
-start_time = time.time()
+with tf.device('/cpu:0'):
+    start_time = time.time()
 
-mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-print("--- read_data: %s seconds ---" % (time.time() - start_time))
-print(line)
-
-
-trainX = np.reshape(mnist.train.images, (-1, 28, 28, 1))
-train_lb = mnist.train.labels
-testX = np.reshape(mnist.test.images, (-1, 28, 28, 1))
-test_lb = mnist.test.labels
+    mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
+    print("--- read_data: %s seconds ---" % (time.time() - start_time))
+    print(line)
 
 
-
-#reformat the data so it's not flat
-trainX=trainX.reshape(len(trainX),28,28,1)
-testX = testX.reshape(len(testX),28,28,1)
+    trainX = np.reshape(mnist.train.images, (-1, 28, 28, 1))
+    train_lb = mnist.train.labels
+    testX = np.reshape(mnist.test.images, (-1, 28, 28, 1))
+    test_lb = mnist.test.labels
 
 
 
-start_time = time.time()
+    #reformat the data so it's not flat
+    trainX=trainX.reshape(len(trainX),28,28,1)
+    testX = testX.reshape(len(testX),28,28,1)
 
-#get a validation set and remove it from the train set
-trainX,valX,train_lb,val_lb=trainX[0:(len(trainX)-500),:,:,:],trainX[(len(trainX)-500):len(trainX),:,:,:],train_lb[0:(len(trainX)-500),:],train_lb[(len(trainX)-500):len(trainX),:]
+
+
+    start_time = time.time()
+
+    #get a validation set and remove it from the train set
+    trainX,valX,train_lb,val_lb=trainX[0:(len(trainX)-500),:,:,:],trainX[(len(trainX)-500):len(trainX),:,:,:],train_lb[0:(len(trainX)-500),:],train_lb[(len(trainX)-500):len(trainX),:]
 
 
 
