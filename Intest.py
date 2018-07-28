@@ -291,18 +291,18 @@ elif FLAGS.job_name == "worker":
         with tf.device('/device:GPU:1'):
 
             with graph.as_default():
-            loss = tf.reduce_mean(
-                tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
-            opt = tf.train.AdamOptimizer(1e-4).minimize(loss)
+                loss = tf.reduce_mean(
+                    tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
+                opt = tf.train.AdamOptimizer(1e-4).minimize(loss)
 
-            predictions_val = tf.nn.softmax(model(tf_valX,train=False))
-            predictions_test = tf.nn.softmax(model(tf_testX,train=False))
+                predictions_val = tf.nn.softmax(model(tf_valX,train=False))
+                predictions_test = tf.nn.softmax(model(tf_testX,train=False))
 
-            #initialize variable
-            init = tf.initialize_all_variables()
+                #initialize variable
+                init = tf.initialize_all_variables()
 
-            #use to save variables so we can pick up later
-            saver = tf.train.Saver()
+                #use to save variables so we can pick up later
+                saver = tf.train.Saver()
 
 
     #set use_previous=1 to use file_path model
