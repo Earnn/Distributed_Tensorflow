@@ -377,7 +377,7 @@ with tf.device('/device:GPU:1'):
             batch_x,batch_y = trainX[offset:(offset+batch_size),:],train_lb[offset:(offset+batch_size),:]
             feed_dict={X : batch_x, y_ : batch_y}
 
-            _,loss_value = sess.run([opt,accuracy,global_step],feed_dict=feed_dict)
+            _,loss_value = sess.run([opt,loss],feed_dict=feed_dict)
 
             # print("step",s)
             # print("--- %s seconds ---" % (time.time() - start_time))
