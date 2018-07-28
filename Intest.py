@@ -300,8 +300,8 @@ elif FLAGS.job_name == "worker":
             loss = tf.reduce_mean(
                 tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
             opt = tf.train.AdamOptimizer(1e-4).minimize(loss,global_step=global_step)
-            correct_prediction = tf.equal(tf.argmax(model(X), 1), tf.argmax(y_, 1)) 
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+            # correct_prediction = tf.equal(tf.argmax(model(X), 1), tf.argmax(y_, 1)) 
+            # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 
 
