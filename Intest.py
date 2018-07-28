@@ -361,7 +361,7 @@ with tf.device('/device:GPU:1'):
     with tf.Session(graph=graph) as sess:
 
     #         #initialize variables
-            # sess.run(init)
+        sess.run(init)
         print("Model initialized.")
 
         #use the previous model or don't and initialize variables
