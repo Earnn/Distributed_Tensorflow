@@ -75,7 +75,7 @@ def accuracy(target,predictions):
 
 
 
-batch_size = 48
+batch_size = 10
 map1 = 32
 map2 = 64
 num_fc1 = 700 #1028
