@@ -87,7 +87,7 @@ if FLAGS.job_name == "ps":
     server.join() 
 elif FLAGS.job_name == "worker":
     with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:%d" % FLAGS.task_index,cluster=cluster)):
-        # global_step = tf.get_variable('global_step', [],initializer=tf.constant_initializer(0),trainable=False)   
+        global_step = tf.get_variable('global_step', [],initializer=tf.constant_initializer(0),trainable=False)   
         with graph.as_default():
             #train data and labels
             X = tf.placeholder(tf.float32,shape=(batch_size,28,28,1))
@@ -290,7 +290,7 @@ elif FLAGS.job_name == "worker":
         #     tf.nn.softmax_cross_entropy_with_logits(logits = yPredbyNN, labels=Y)
             loss = tf.reduce_mean(
                 tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
-            opt = tf.train.AdamOptimizer(1e-4).minimize(loss)
+            opt = tf.train.AdamOptimizer(1e-4).minimize(loss,global_step=global_step)
 
             predictions_val = tf.nn.softmax(model(tf_valX,train=False))
             predictions_test = tf.nn.softmax(model(tf_testX,train=False))
