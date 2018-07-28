@@ -13,7 +13,7 @@ cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker":workers})
 tf.app.flags.DEFINE_string("job_name", "", "'ps' / 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task")
 FLAGS = tf.app.flags.FLAGS
-server = tf.train.Server(cluster,job_name=FLAGS.job_name,task_index=FLAGS.task_index, protocol='grpc+verbs')
+server = tf.train.Server(cluster,job_name=FLAGS.job_name,task_index=FLAGS.task_index, protocol='grpc+gdr')
 
 with tf.device('/cpu:0'):
     start_time = time.time()
@@ -335,9 +335,7 @@ elif FLAGS.job_name == "worker":
     acc_stability_count = 0
 
 
-    sv = tf.train.Supervisor(is_chief=(FLAGS.task_index == 0), logdir=LOG_DIR,
-                                global_step=global_step,
-                                init_op=init_op)
+    sv = tf.train.Supervisor(is_chief=(FLAGS.task_index == 0), logdir=LOG_DIR,global_step=global_step,init_op=init_op)
     with sv.managed_session(server.target) as sess:
         while not sv.should_stop() and s <= TRAINING_STEPS:
     # hooks=[tf.train.StopAtStepHook(last_step=100000)]
