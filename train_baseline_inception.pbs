@@ -1,0 +1,28 @@
+cd "$PBS_O_WORKDIR" || exit $?
+
+export SINGULARITYENV_LD_LIBRARY_PATH=/home/projects/21170158/mpi/openmpi-1.10.7-cuda9-gnu4/lib:$SINGULARITYENV_LD_LIBRARY_PATH
+export SINGULARITYENV_OMP_NUM_THREADS=4
+
+i=0
+for ihost in `uniq $PBS_NODEFILE`
+do
+ export host${i}=${ihost}
+ i=$((i+1))
+done
+
+echo $host0
+echo $host1
+
+ps_host="${host0}:50000"
+wk_host="${host0}:50001,${host1}:50001"
+
+GLOBAL_WORDS="/opt/singularity/bin/singularity exec --nv -B /home/projects/21170158/imagenet_tf:/bazel /home/project/21170158/reference/DGX_MOFED401010_tensorflow1.6-gpu.simg python /home/projects/21170158/reference/Distributed_Tensorflow/baseline.py"
+
+echo $GLOBAL_WORDS
+
+mpirun \
+ -host ${host0} -np 1 sh /home/projects/21170158/workplace/apacsc15/run_both.sh "$GLOBAL_WORDS" 0 0 : \
+ -host ${host1} -np 1 sh /home/projects/21170158/workplace/apacsc15/run_worker.sh "$GLOBAL_WORDS" 1a
+
+#/opt/singularity/bin/singularity exec --nv /home/project/21170158/reference/DGX_MOFED401010_tensorflow1.6-gpu.simg \
+#python -c "import tensorflow as tf; print tf.__version__"
