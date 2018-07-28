@@ -331,6 +331,7 @@ elif FLAGS.job_name == "worker":
     convergence_time = 0
     val_accuracy = 0
     step = 0
+    step_inloop = 0
     acc_stability_count = 0
 
 
@@ -338,7 +339,7 @@ elif FLAGS.job_name == "worker":
                                 global_step=global_step,
                                 init_op=init_op)
     with sv.managed_session(server.target) as sess:
-        while not sv.should_stop() and step <= TRAINING_STEPS:
+        while not sv.should_stop() and step_inloop <= TRAINING_STEPS:
     # hooks=[tf.train.StopAtStepHook(last_step=100000)]
 
     # with tf.train.MonitoredTrainingSession(master=server.target,
@@ -431,7 +432,8 @@ elif FLAGS.job_name == "worker":
     print("Convergence time: ",convergence_time)
     print("Step: ",step)
     print("--- total_time %s second ---"% (time.time() - start_time2))
-    sess.close()       
+    # sess.close()       
 
+    sv.stop()
     
 
