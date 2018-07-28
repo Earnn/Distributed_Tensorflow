@@ -22,11 +22,7 @@ LOG_DIR = "/tmp/log"
 
 parameter_servers = ["localhost:2222"] 
 
-workers = ["localhost:2223", 
-
-           "localhost:2224", 
-
-           "localhost:2225"] 
+workers = ["localhost:2223", "localhost:2224","localhost:2225"] 
 
  
 
@@ -37,7 +33,6 @@ cluster = tf.train.ClusterSpec({"ps": parameter_servers, "worker": workers})
  
 
 tf.app.flags.DEFINE_string("job_name", "", "'ps' / 'worker'") 
-
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task") 
 
 FLAGS = tf.app.flags.FLAGS 
@@ -46,11 +41,7 @@ FLAGS = tf.app.flags.FLAGS
 
  
 
-server = tf.train.Server(cluster, 
-
-                         job_name=FLAGS.job_name, 
-
-                         task_index=FLAGS.task_index) 
+server = tf.train.Server(cluster,job_name=FLAGS.job_name,=task_index=FLAGS.task_index) 
 
  
 
@@ -76,9 +67,7 @@ def net(x):
 
     net = slim.layers.fully_connected(net, 500, scope='fully_connected') 
 
-    net = slim.layers.fully_connected(net, 10, activation_fn=None, 
-
-                                      scope='pred') 
+    net = slim.layers.fully_connected(net, 10, activation_fn=None,=scope='pred') 
 
     return net 
 
@@ -98,17 +87,11 @@ elif FLAGS.job_name == "worker":
 
     with tf.device(tf.train.replica_device_setter( 
 
-            worker_device="/job:worker/task:%d" % FLAGS.task_index, 
-
-            cluster=cluster)): 
+            worker_device="/job:worker/task:%d" % FLAGS.task_index,cluster=cluster)): 
 
  
 
-        global_step = tf.get_variable('global_step', [], 
-
-                                      initializer=tf.constant_initializer(0), 
-
-                                      trainable=False) 
+        global_step = tf.get_variable('global_step', [],initializer=tf.constant_initializer(0),=trainable=False) 
 
  
 
@@ -120,9 +103,7 @@ elif FLAGS.job_name == "worker":
 
  
 
-        cross_entropy = tf.reduce_mean( 
-
-                tf.nn.softmax_cross_entropy_with_logits(y, y_)) 
+        cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y, y_)) 
 
         train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy, global_step=global_step) 
 
@@ -138,13 +119,7 @@ elif FLAGS.job_name == "worker":
 
  
 
-    sv = tf.train.Supervisor(is_chief=(FLAGS.task_index == 0), 
-
-                             logdir=LOG_DIR, 
-
-                             global_step=global_step, 
-
-                             init_op=init_op) 
+    sv = tf.train.Supervisor(is_chief=(FLAGS.task_index == 0),logdir=LOG_DIR,global_step=global_step,init_op=init_op) 
 
  
 
@@ -162,23 +137,17 @@ elif FLAGS.job_name == "worker":
 
  
 
-            _, acc, step = sess.run([train_step, accuracy, global_step], 
-
-                                    feed_dict={x: batch_x, y_: batch_y}) 
+            _, acc, step = sess.run([train_step, accuracy, global_step],feed_dict={x: batch_x, y_: batch_y}) 
 
  
 
             if step % PRINT_EVERY == 0: 
 
-                print "Worker : {}, Step: {}, Accuracy (batch): {}".\ 
-
-                    format(FLAGS.task_index, step, acc) 
+                print "Worker : {}, Step: {}, Accuracy (batch): {}".format(FLAGS.task_index, step, acc) 
 
  
 
-        test_acc = sess.run(accuracy, feed_dict={x: mnist.test.images,  
-
-                                                 y_: mnist.test.labels}) 
+        test_acc = sess.run(accuracy, feed_dict={x: mnist.test.images,y_: mnist.test.labels}) 
 
         print "Test-Accuracy: {}".format(test_acc) 
 
