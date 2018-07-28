@@ -326,7 +326,7 @@ elif FLAGS.job_name == "worker":
     PRINT_EVERY = 100 
 
     LOG_DIR = "/tmp/log"
-    with tf.device('/device:GPU:0'):
+    with tf.device('/device:GPU:1'):
         num_steps = 10000
         convergence_time = 0
         val_accuracy = 0
