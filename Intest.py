@@ -349,12 +349,12 @@ elif FLAGS.job_name == "worker":
 
         #     while not sess.should_stop():
         
-        config=tf.ConfigProto(log_device_placement=True)
-        #maximun alloc gpu 10% of MEM
-        config.gpu_options.per_process_gpu_memory_fraction = 0.5
-        config.gpu_options.allow_growth = True #allocate dynamically
+        # config=tf.ConfigProto(log_device_placement=True)
+        # #maximun alloc gpu 10% of MEM
+        # config.gpu_options.per_process_gpu_memory_fraction = 0.5
+        # config.gpu_options.allow_growth = True #allocate dynamically
 
-        sess = tf.Session(config = config)
+        # sess = tf.Session(config = config)
         total_time = time.time()
 
 
