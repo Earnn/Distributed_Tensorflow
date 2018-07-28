@@ -87,8 +87,8 @@ if FLAGS.job_name == "ps":
     server.join() 
 elif FLAGS.job_name == "worker":
     with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:%d" % FLAGS.task_index,cluster=cluster)):
-        # global_step = tf.get_variable('global_step', [],initializer=tf.constant_initializer(0),trainable=False)   
-        global_step = tf.Variable(0, trainable=False, name='global_step')
+        global_step = tf.get_variable('global_step', [],initializer=tf.constant_initializer(0),trainable=False)   
+        # global_step = tf.Variable(0, trainable=False, name='global_step')
 
         with graph.as_default():
             #train data and labels
@@ -295,18 +295,18 @@ elif FLAGS.job_name == "worker":
             # cross_entropy = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(y, y_))
             # train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy, global_step=global_step)
             
-        loss = tf.reduce_mean(
-            tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
-        opt = tf.train.AdamOptimizer(1e-4).minimize(loss,global_step=global_step)
+            loss = tf.reduce_mean(
+                tf.nn.softmax_cross_entropy_with_logits(logits=model(X),labels=y_))
+            opt = tf.train.AdamOptimizer(1e-4).minimize(loss,global_step=global_step)
 
-        predictions_val = tf.nn.softmax(model(tf_valX,train=False))
-        predictions_test = tf.nn.softmax(model(tf_testX,train=False))
+            predictions_val = tf.nn.softmax(model(tf_valX,train=False))
+            predictions_test = tf.nn.softmax(model(tf_testX,train=False))
 
-        #initialize variable
-        init = tf.initialize_all_variables()
-
-        #use to save variables so we can pick up later
-        saver = tf.train.Saver()
+            #initialize variable
+            init = tf.initialize_all_variables()
+            init_op = tf.global_variables_initializer()
+            #use to save variables so we can pick up later
+            saver = tf.train.Saver()
 
 
     #set use_previous=1 to use file_path model
@@ -327,14 +327,21 @@ elif FLAGS.job_name == "worker":
         val_accuracy = 0
         step = 0
         acc_stability_count = 0
-        hooks=[tf.train.StopAtStepHook(last_step=100000)]
 
-        with tf.train.MonitoredTrainingSession(master=server.target,
-            is_chief=(FLAGS.task_index == 0),
-            checkpoint_dir=LOG_DIR,
-            hooks = hooks) as sess:
 
-            while not sess.should_stop():
+        sv = tf.train.Supervisor(is_chief=(FLAGS.task_index == 0), logdir=LOG_DIR,
+                                    global_step=global_step,
+                                    init_op=init_op)
+        with sv.managed_session(server.target) as sess:
+            while not sv.should_stop() and step <= TRAINING_STEPS:
+        # hooks=[tf.train.StopAtStepHook(last_step=100000)]
+
+        # with tf.train.MonitoredTrainingSession(master=server.target,
+        #     is_chief=(FLAGS.task_index == 0),
+        #     checkpoint_dir=LOG_DIR,
+        #     hooks = hooks) as sess:
+
+        #     while not sess.should_stop():
         
         # config=tf.ConfigProto(log_device_placement=True)
         # #maximun alloc gpu 10% of MEM
