@@ -124,9 +124,7 @@ elif FLAGS.job_name == "worker":
 
                 tf.nn.softmax_cross_entropy_with_logits(y, y_)) 
 
-        train_step = tf.train.AdamOptimizer(1e-4)\ 
-
-                .minimize(cross_entropy, global_step=global_step) 
+        train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy, global_step=global_step) 
 
  
 
